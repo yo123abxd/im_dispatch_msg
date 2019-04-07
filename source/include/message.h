@@ -8,12 +8,20 @@
 #include <tuple>
 #include <map>
 #include <unordered_map>
-#include "../thirdparty/json/json.hpp"
 
+class Uncopyable {
+protected:
+    Uncopyable() {}
+    ~Uncopyable() {}
+private:
+    Uncopyable(const Uncopyable&);
+    Uncopyable& operator=(const Uncopyable&);
+};
 
 class Message {
 public:
-    std::shared_ptr<std::string> jsonStrP;
+    std::shared_ptr<const std::string> jsonStrP;
+    Message(const std::string& json_);
 };
 
 class User {
@@ -23,6 +31,8 @@ private:
     std::vector<Message> unreadMsgs;
 public:
     User(unsigned long long userId_);
+    User(const std::string& json_);
+    std::string toJson();
     std::vector<Message>& getMessages();
     void addMsg(const Message& toAddMsg);
 };
@@ -36,6 +46,8 @@ private:
 public:
     Group(unsigned long long groupId_, const std::vector<unsigned long long>& memberId);
     Group(unsigned long long groupId_);
+    Group(const std::string& json_);
+    std::string toJson();
 
     int addGroupMember(unsigned long long userId);
     int removeGroupMember(unsigned long long userId);
@@ -43,13 +55,17 @@ public:
     std::vector<Message> getMessage(unsigned long long userId);
 };
 
-class MsgManager {
+class MsgManager : Uncopyable {
 private:
+    MsgManager();
+    ~MsgManager();
     typedef unsigned long long ull;
     std::unordered_map<ull, User> userDic;
     std::unordered_map<ull, Group> groupDic;
 
 public:
+    static MsgManager& getInstance();
+
     std::string getMessage(unsigned long long userId);
     void setOneMsg(unsigned long long srcId, unsigned long long destId, const std::string& msg);
     void setGroupMsg(unsigned long long srcUserId, unsigned long long destGroupId, const std::string& msg);
