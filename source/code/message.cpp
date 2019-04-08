@@ -39,7 +39,8 @@ void User::addMsg(const Message& toAddMsg) {
     unreadMsgs.push_back(toAddMsg);
 }
 
-Group::Group(unsigned long long groupId_, const std::vector<unsigned long long>& memberId) {
+Group::Group(unsigned long long groupId_, const std::vector<unsigned long long>& memberId) : groupId(groupId_){
+    
 
 }
 
