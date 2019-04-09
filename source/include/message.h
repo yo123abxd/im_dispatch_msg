@@ -50,8 +50,10 @@ namespace imfunction {
     public:
         static IndvMsgMgr& getInstance();
 
-        std::string getMessage(unsigned long long userId);
-        void setMsg(unsigned long long srcId, unsigned long long destId, const std::string& msg);
+        int addUser(unsigned long long userId);
+        int removeUser(unsigned long long userId);
+        std::shared_ptr<std::string> getMessage(unsigned long long userId);
+        int setMsg(unsigned long long srcId, unsigned long long destId, const std::string& msg);
     };
 
     class GroupMsgCtnr {
@@ -81,8 +83,6 @@ namespace imfunction {
         std::unordered_map<ull, GroupMsgCtnr> groupDic;
     public:
         void setGroupMsg(unsigned long long srcUserId, unsigned long long destGroupId, const std::string& msg);
-        int addUser(unsigned long long userId);
-        int removeUser(unsigned long long userId);
         int createGroup(unsigned long long groupId);
         int removeGroup(unsigned long long groupId);
         int addUserToGroup(unsigned long long groupId, unsigned long long userId);
