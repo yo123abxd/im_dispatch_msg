@@ -22,8 +22,9 @@ namespace msgDispatcher {
 
     class Message {
     public:
+        Message(unsigned long long srcId_, const std::string& json_);
         std::shared_ptr<const std::string> jsonStrP;
-        Message(const std::string& json_);
+        unsigned long long srcId;
     };
 
     class User {
@@ -53,6 +54,7 @@ namespace msgDispatcher {
 
         int addGroupMember(unsigned long long userId);
         int removeGroupMember(unsigned long long userId);
+        //std::vector<unsigned long long> getMembers();
         void addMessage(const Message& toAddMsg);
         std::vector<Message> getMessage(unsigned long long userId);
     };
@@ -68,7 +70,16 @@ namespace msgDispatcher {
         static IndivMsgMgr& getInstance();
 
         std::string getMessage(unsigned long long userId);
-        void setOneMsg(unsigned long long srcId, unsigned long long destId, const std::string& msg);
+        void setMsg(unsigned long long srcId, unsigned long long destId, const std::string& msg);
+    };
+
+    class GroupMgr : public Uncopyable {
+    private:
+        GroupMgr();
+        ~GroupMgr();
+        typedef unsigned long long ull;
+        std::unordered_map<ull, Group> groupDic;
+    public:
         void setGroupMsg(unsigned long long srcUserId, unsigned long long destGroupId, const std::string& msg);
         int addUser(unsigned long long userId);
         int removeUser(unsigned long long userId);
@@ -77,14 +88,6 @@ namespace msgDispatcher {
         int addUserToGroup(unsigned long long groupId, unsigned long long userId);
         int removeUserFromGroup(unsigned long long groupId, unsigned long long userId);
         std::vector<unsigned long long> getGroupUserId(unsigned long long groupId);
-    };
-
-    class GroupMsgMgr : public Uncopyable {
-    private:
-        GroupMsgMgr();
-        ~GroupMsgMgr();
-        typedef unsigned long long ull;
-        std::unordered_map<ull, Group> groupDic;
 
     };
 
