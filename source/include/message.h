@@ -56,6 +56,17 @@ namespace imfunction {
         int setMsg(unsigned long long srcId, unsigned long long destId, const std::string& msg);
     };
 
+
+
+
+
+
+
+
+
+
+
+
     class GroupMsgCtnr {
     private:
         typedef unsigned long long ull;

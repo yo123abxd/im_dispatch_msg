@@ -57,23 +57,25 @@ namespace imfunction {
         return 1;
     }
 
-    std::shared_ptr<std::string> IndvMsgMgr::getMessage(ull userId) {
+    std::shared_ptr<std::vector<std::pair<ull, std::string>>> IndvMsgMgr::getMessage(ull userId) {
         auto uIt = userDic.find(userId);
         if(uIt == userDic.end()) {
-            return std::make_shared<std::string>(nullptr);
+            return nullptr;
         }
-        json j = json::array();
         std::vector<Message>& msg = uIt->second.getMessages();
-        for(auto it = msg.begin(); it != msg.end(); it++) {
-            json tempJs;
-            tempJs["srcId"] = it->srcId;
-            tempJs["content"] = json::parse(*(it->jsonStrP));
-            j.push_back(tempJs);
+        size_t msgSize = msg.size();
+        std::shared_ptr<std::vector<std::pair<ull, std::string>>> retP = 
+            make_shared<std::vector<std::pair<ull, std::string>>>(msg.size());
+        for(int i = 0; i < msgSize; i++) {
+            (*retP)[i].first = msg[i].srcId;
+            (*retP)[i].second = *(msg[i].jsonStrP);
         }
-        return std::make_shared<std::string>(j.dump());
+        return retP;
     }
 
-    void setMsg() {
+    int setMsg(unsigned long long srcId, unsigned long long destId, const std::string& msg) {
+        // 是否在dic中，没有则。。。有则。。。
+        return 1;
     }
 
 
