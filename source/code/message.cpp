@@ -420,7 +420,8 @@ namespace im {
             //在数据库中寻找user，若user不存在则插入
             if(userInDB == nullptr) {
                 dbMgr.addToProcList(std::shared_ptr<Alter>(new InsUserAlter(userId)));
-                userMap[userId] = User(userId);
+                //userMap[userId] = User(userId);
+                userMap.insert(std::make_pair(userId, User(userId)));
 
                 AutoUnlock<LRUctnr> lruLock(&lru);
                 auto toPop = lru.insert(userId);
@@ -470,9 +471,10 @@ namespace im {
 
             //在数据库中找到该User
             pUserMsgs = ptmpUser->getAndCleanMsg();
-
+            
             //从数据库中调入内存中
-            userMap[userId] = *ptmpUser;
+            //userMap[userId] = *ptmpUser;
+            userMap.insert(std::make_pair(userId, *ptmpUser));
             AutoUnlock<LRUctnr> lruLock(&lru);
             auto toPop = lru.insert(userId);
             if(toPop.first) {
@@ -486,7 +488,11 @@ namespace im {
         }
         std::shared_ptr<std::vector<std::pair<ull, std::string>>> ret(new std::vector<std::pair<ull, std::string>>());
 
-        for(auto msgIt = pUserMsgs->begin(); msgIt != pUserMsgs->end(); ++it) {
+        if(pUserMsgs == nullptr) {
+        }
+        for(auto msgIt = pUserMsgs->begin(); msgIt != pUserMsgs->end(); ++msgIt) {
+            if(msgIt->pJsonStr == nullptr) {
+            }
             ret->push_back(std::make_pair(msgIt->srcId, *(msgIt->pJsonStr)));
         }
 
@@ -515,7 +521,7 @@ namespace im {
             ptmpUser->addMsg(toAdd);
 
             //从数据库中调入内存中
-            userMap[destId] = *ptmpUser;
+            userMap.insert(std::make_pair(destId, *ptmpUser));
             AutoUnlock<LRUctnr> lruLock(&lru);
             auto toPop = lru.insert(destId);
             if(toPop.first) {
